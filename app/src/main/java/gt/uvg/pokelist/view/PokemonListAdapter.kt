@@ -30,7 +30,7 @@ class PokemonListAdapter(private val pokemonList: List<Pokemon>) :
             holder.itemView.findNavController().navigate(action)
         }
     }
-
+    
     override fun getItemCount(): Int {
         return pokemonList.size
     }

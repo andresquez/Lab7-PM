@@ -1,22 +1,27 @@
-package gt.uvg.pokelist.repository
+package gt.uvg.pokelist.model
 
-import gt.uvg.pokelist.model.Pokemon
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.*
 
-class PokemonRepository {
+object ApiClient {
+    private const val BASE_URL = "https://pokeapi.co/api/v2/"
 
-    // Obtain pokemon list from https://pokeapi.co/
-    fun getPokemonList(): List<Pokemon> {
-        return listOf(
-            Pokemon(1, "bulbasaur"),
-            Pokemon(2, "ivysaur"),
-            Pokemon(3, "venusaur"),
-            Pokemon(4, "charmander"),
-            Pokemon(5, "charmeleon"),
-            Pokemon(6, "charizard"),
-            Pokemon(7, "squirtle"),
-            Pokemon(8 , "wartortle"),
-            Pokemon(9, "blastoise"),
-            Pokemon(10,"caterpie")
-        )
+    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
     }
+    val service: ApiService = retrofit.create(ApiService::class.java)
+}
+
+interface ApiService {
+    @GET("pokemon?limit=100")
+    fun getFirst100Pokemon(): Call<PokemonResponse>
 }

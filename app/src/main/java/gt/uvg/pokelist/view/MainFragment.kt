@@ -2,15 +2,19 @@ package gt.uvg.pokelist.view
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import gt.uvg.pokelist.databinding.FragmentMainBinding
-import gt.uvg.pokelist.repository.PokemonRepository
+import gt.uvg.pokelist.model.ApiClient
+import gt.uvg.pokelist.model.PokemonResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
-class MainFragment: Fragment() {
+class MainFragment : Fragment() {
 
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
@@ -27,10 +31,26 @@ class MainFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val pokemonList = PokemonRepository().getPokemonList()
-        recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = PokemonListAdapter(pokemonList)
+        ApiClient.service.getFirst100Pokemon().enqueue(object : Callback<PokemonResponse> {
+            override fun onResponse(
+                call: Call<PokemonResponse>,
+                response: Response<PokemonResponse>
+            ) {
+                val pokemonList = response.body()?.result
+                recyclerView = binding.recyclerView
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = PokemonListAdapter(pokemonList!!)
+                Toast.makeText(
+                    requireContext(),
+                    "Poke Encontrados: " + pokemonList.size,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            override fun onFailure(call: Call<PokemonResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), "ERROR AL CARGAR POKES", Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     override fun onDestroyView() {

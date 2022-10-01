@@ -1,4 +1,5 @@
 package gt.uvg.pokelist.view
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -7,12 +8,15 @@ import com.squareup.picasso.Picasso
 import gt.uvg.pokelist.databinding.ItemPokemonViewBinding
 import gt.uvg.pokelist.model.Pokemon
 
-class PokemonListAdapter(private val pokemonList: List<Pokemon>) : RecyclerView.Adapter<PokemonListAdapter.PokemonListHolder>() {
+class PokemonListAdapter(private val pokemonList: List<Pokemon>) :
+    RecyclerView.Adapter<PokemonListAdapter.PokemonListHolder>() {
 
-    inner class PokemonListHolder(val binding: ItemPokemonViewBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class PokemonListHolder(val binding: ItemPokemonViewBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PokemonListHolder {
-        val binding = ItemPokemonViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemPokemonViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PokemonListHolder(binding)
     }
 
@@ -21,7 +25,7 @@ class PokemonListAdapter(private val pokemonList: List<Pokemon>) : RecyclerView.
         holder.binding.pokemonName.text = poke.name
         Picasso.get().load(poke.imageUrlFront).into(holder.binding.pokemonPhoto)
 
-        holder.binding.root.setOnClickListener{
+        holder.binding.root.setOnClickListener {
             val action = MainFragmentDirections.actionMainFragmentToDetailFragment(poke.id)
             holder.itemView.findNavController().navigate(action)
         }
